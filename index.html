@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0b1420" />
   <meta name="description" content="Reality Unbound Part 4: WebRTC peer-to-peer multiplayer, host-authoritative vehicle physics, shared objects, and advanced vehicle deformation." />
   <title>Reality Unbound — Physics Sandbox</title>
-  <script type="module" crossorigin src="./assets/index-ChAx9xrk.js"></script>
+  <script type="module" crossorigin src="./assets/index-BoLpGUKd.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index-s8vcPd67.css">
 </head>
 <body>
@@ -19,7 +19,7 @@
     <div class="hud-right"><span id="map-name">ATLAS TEST FACILITY</span><span id="mode-pill" class="pill">CREATIVE</span><button id="pause-btn" class="icon-btn" title="Pause">☰</button></div>
   </header>
   <button id="network-chip" class="network-chip hidden" title="Copy multiplayer invite link">OFFLINE</button>
-  <div id="stats" class="hidden"><div><span>FPS</span><strong id="fps">—</strong></div><div><span>BODIES</span><strong id="body-count">0</strong></div><div><span>SIM</span><strong id="sim-speed">1.0×</strong></div><div><span>POS</span><strong id="player-pos">—</strong></div></div>
+  <div id="stats" class="hidden"><div><span>FPS</span><strong id="fps">—</strong></div><div><span>BODIES</span><strong id="body-count">0</strong></div><div><span>NPCs</span><strong id="npc-count">0</strong></div><div><span>SIM</span><strong id="sim-speed">1.0×</strong></div><div><span>POS</span><strong id="player-pos">—</strong></div></div>
   <aside id="vehicle-hud" class="hidden" aria-live="off">
     <div class="vehicle-top"><span>ROAD TEST / VEHICLE 01</span><span id="vehicle-warning">CHASSIS STABLE</span></div>
     <div class="vehicle-readout"><div><strong id="speed-value">0</strong><small>KM/H<br>GROUND SPEED</small></div><div class="gear-box"><strong id="gear-value">1</strong><small>GEAR</small></div></div>
@@ -54,7 +54,7 @@
         </div>
         <small id="net-main-status">No account required · Requires WebRTC + online signaling · TURN relay not included</small>
       </div>
-      <div class="menu-footer"><button id="start-btn" class="primary-btn">ENTER SANDBOX <span>↗</span></button><div class="build-note">WEBGL / RAPIER 3D<br>PART 4 · WEBRTC MULTIPLAYER + DEFORMATION</div></div>
+      <div class="menu-footer"><button id="start-btn" class="primary-btn">ENTER SANDBOX <span>↗</span></button><div class="build-note">WEBGL / RAPIER 3D<br>PART 5 · NPC RAGDOLLS + STABILITY AUDIT</div></div>
     </div>
     <div class="menu-footerline">PHYSICS-DRIVEN EXPERIMENTATION <span>SHARED VEHICLES · HOST PHYSICS · WEBRTC DATA CHANNELS</span></div>
   </section>
@@ -73,7 +73,7 @@
       </div>
       <div class="network-session-line"><span id="network-status">LOCAL SINGLE-PLAYER</span><button id="leave-room-btn" class="secondary-btn hidden" type="button">LEAVE ROOM</button></div>
       <div class="panel-actions"><button id="save-btn" class="secondary-btn">SAVE WORLD</button><button id="load-btn" class="secondary-btn">LOAD WORLD</button><button id="reset-btn" class="secondary-btn danger-btn">RESET OBJECTS</button><button id="main-menu-btn" class="secondary-btn">MAIN MENU</button></div>
-      <p class="panel-footnote">World saves include collision damage, vehicle condition, glass breakage and detached-part state. This build adds a plastically deforming body shell and periodically rebuilt convex collision hull. The chassis remains one rigid body, not a BeamNG-style node-beam solver. Online rooms use encrypted WebRTC data channels, public PeerJS signaling, and host-authoritative physics. TURN relays, reconnect recovery, authoritative player prediction, active ragdolls and water simulation still require further work.</p>
+      <p class="panel-footnote">World saves include collision damage, vehicle condition, glass breakage and detached-part state. This build adds a plastically deforming body shell and periodically rebuilt convex collision hull. The chassis remains one rigid body, not a BeamNG-style node-beam solver. Online rooms use encrypted WebRTC data channels, public PeerJS signaling, and host-authoritative physics. TURN relays, reconnect recovery, authoritative player prediction, active player ragdolls, pathfinding across complex city maps and water simulation still require further work.</p>
     </div>
   </section>
 
