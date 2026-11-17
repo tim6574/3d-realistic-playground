@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0b1420" />
-  <meta name="description" content="Reality Unbound: a real-time 3D rigid-body physics sandbox vertical slice." />
+  <meta name="description" content="Reality Unbound Part 4: WebRTC peer-to-peer multiplayer, host-authoritative vehicle physics, shared objects, and advanced vehicle deformation." />
   <title>Reality Unbound — Physics Sandbox</title>
-  <script type="module" crossorigin src="./assets/index-D8YGdZDZ.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-DklPyf7L.css">
+  <script type="module" crossorigin src="./assets/index-ChAx9xrk.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-s8vcPd67.css">
 </head>
 <body>
   <div id="viewport"></div>
@@ -15,29 +15,48 @@
   <div id="crosshair" aria-hidden="true"><span></span><span></span></div>
   <div id="damage-flash"></div>
   <header id="hud" class="hidden">
-    <div class="brand"><span class="brand-symbol">R<span>U</span></span><span><b>REALITY UNBOUND</b><small>PHYSICS SANDBOX // ALPHA 0.1</small></span></div>
+    <div class="brand"><span class="brand-symbol">R<span>U</span></span><span><b>REALITY UNBOUND</b><small>WEBRTC MULTIPLAYER // ALPHA 0.4.0</small></span></div>
     <div class="hud-right"><span id="map-name">ATLAS TEST FACILITY</span><span id="mode-pill" class="pill">CREATIVE</span><button id="pause-btn" class="icon-btn" title="Pause">☰</button></div>
   </header>
+  <button id="network-chip" class="network-chip hidden" title="Copy multiplayer invite link">OFFLINE</button>
   <div id="stats" class="hidden"><div><span>FPS</span><strong id="fps">—</strong></div><div><span>BODIES</span><strong id="body-count">0</strong></div><div><span>SIM</span><strong id="sim-speed">1.0×</strong></div><div><span>POS</span><strong id="player-pos">—</strong></div></div>
+  <aside id="vehicle-hud" class="hidden" aria-live="off">
+    <div class="vehicle-top"><span>ROAD TEST / VEHICLE 01</span><span id="vehicle-warning">CHASSIS STABLE</span></div>
+    <div class="vehicle-readout"><div><strong id="speed-value">0</strong><small>KM/H<br>GROUND SPEED</small></div><div class="gear-box"><strong id="gear-value">1</strong><small>GEAR</small></div></div>
+    <div id="speed-track"><div id="speed-track-fill"></div></div>
+    <div class="vehicle-metrics"><span>ENGINE <b id="rpm-value">850</b> RPM</span><span>STRUCTURE <b id="vehicle-condition">100%</b></span></div>
+    <div class="vehicle-controls">W / S <b>THROTTLE · BRAKE</b> &nbsp; A / D <b>STEER</b><br>SPACE <b>HANDBRAKE</b> &nbsp; C <b>CAMERA</b> &nbsp; R <b>RECOVER</b> &nbsp; E <b>EXIT</b></div>
+  </aside>
   <div id="interaction" class="hidden"><span id="interaction-name">CONCRETE BLOCK</span><small id="interaction-hint">LMB TO GRAB · RMB TO THROW</small></div>
   <div id="tool-status" class="hidden"><span id="tool-name">PHYSICS GUN</span><span id="tool-description">Hold left mouse to grab objects</span></div>
-  <div id="controls-hint" class="hidden">WASD <b>MOVE</b> &nbsp; SHIFT <b>SPRINT</b> &nbsp; SPACE <b>JUMP</b> &nbsp; LMB <b>GRAB</b> &nbsp; RMB <b>PUSH</b> &nbsp; Q <b>SPAWN</b> &nbsp; G <b>TOOL</b> &nbsp; ESC <b>PAUSE</b></div>
+  <div id="controls-hint" class="hidden">WASD <b>MOVE</b> &nbsp; E <b>DRIVE</b> &nbsp; SHIFT <b>SPRINT</b> &nbsp; SPACE <b>JUMP</b> &nbsp; LMB <b>GRAB</b> &nbsp; RMB <b>PUSH</b> &nbsp; Q <b>SPAWN</b> &nbsp; G <b>TOOL</b> &nbsp; ESC <b>PAUSE</b></div>
   <div id="toast-container" aria-live="polite"></div>
 
   <section id="menu" class="overlay">
     <div class="menu-bg"></div><div class="grid-decoration"></div>
     <div class="menu-container">
-      <div class="overline">A WORLD WITHOUT LIMITS <span class="line"></span> PRE-ALPHA // BUILD 001</div>
+      <div class="overline">A WORLD WITHOUT LIMITS <span class="line"></span> ALPHA 0.4.0 // ONLINE SANDBOX</div>
       <h1>REALITY<br><em>UNBOUND.</em></h1>
-      <p class="intro">An experimental 3D physics world. Build towers. Trigger collisions. Break things. Bend gravity. <b>Everything moves for a reason.</b></p>
+      <p class="intro">Crash and deform cars with physically simulated suspension and evolving collision hulls. Spawn objects, break glass, and experiment with real rigid-body interactions. <b>Host a WebRTC room to share the physics sandbox with friends.</b></p>
       <div class="section-title">SELECT ENVIRONMENT <span>02 AVAILABLE</span></div>
       <div class="map-options">
-        <button class="map-card selected" data-map="facility" aria-pressed="true"><div class="map-art facility-art"><span class="map-index">01 / LAB</span><div class="art-runway"></div><div class="art-tower"></div><div class="art-cube"></div></div><div class="map-text"><strong>ATLAS TEST FACILITY</strong><small>Ramps · impact chambers · physics rigs</small></div><span class="map-check">✓</span></button>
-        <button class="map-card" data-map="range" aria-pressed="false"><div class="map-art range-art"><span class="map-index">02 / OPEN</span><div class="art-sun"></div><div class="art-hill hill-1"></div><div class="art-hill hill-2"></div></div><div class="map-text"><strong>OPEN RANGE</strong><small>Rolling terrain · boulders · open space</small></div><span class="map-check">✓</span></button>
+        <button class="map-card selected" data-map="facility" aria-pressed="true"><div class="map-art facility-art"><span class="map-index">01 / LAB</span><div class="art-runway"></div><div class="art-tower"></div><div class="art-cube"></div></div><div class="map-text"><strong>ATLAS TEST FACILITY</strong><small>Driving runway · collision tests · crash rigs</small></div><span class="map-check">✓</span></button>
+        <button class="map-card" data-map="range" aria-pressed="false"><div class="map-art range-art"><span class="map-index">02 / OPEN</span><div class="art-sun"></div><div class="art-hill hill-1"></div><div class="art-hill hill-2"></div></div><div class="map-text"><strong>OPEN RANGE</strong><small>Natural woodland · rolling terrain · off-road trials</small></div><span class="map-check">✓</span></button>
       </div>
-      <div class="menu-footer"><button id="start-btn" class="primary-btn">ENTER SANDBOX <span>↗</span></button><div class="build-note">WEBGL / RAPIER 3D<br>LOCAL SINGLE-PLAYER VERTICAL SLICE</div></div>
+      <div class="multiplayer-panel">
+        <div class="section-title" style="margin:0 0 12px;padding-top:0">MULTIPLAYER <span>UP TO 4 PLAYERS · HOST AUTHORITATIVE</span></div>
+        <div class="network-actions">
+          <button id="host-btn" class="secondary-btn multiplayer-host">HOST ONLINE ROOM</button>
+          <div class="join-controls">
+            <input id="join-code" type="text" maxlength="12" placeholder="8-DIGIT ROOM CODE" spellcheck="false" autocomplete="off" aria-label="Room code" />
+            <button id="join-btn" class="secondary-btn">JOIN FRIEND</button>
+          </div>
+        </div>
+        <small id="net-main-status">No account required · Requires WebRTC + online signaling · TURN relay not included</small>
+      </div>
+      <div class="menu-footer"><button id="start-btn" class="primary-btn">ENTER SANDBOX <span>↗</span></button><div class="build-note">WEBGL / RAPIER 3D<br>PART 4 · WEBRTC MULTIPLAYER + DEFORMATION</div></div>
     </div>
-    <div class="menu-footerline">PHYSICS-DRIVEN EXPERIMENTATION <span>REAL SIMULATION · NOT PRE-RENDERED</span></div>
+    <div class="menu-footerline">PHYSICS-DRIVEN EXPERIMENTATION <span>SHARED VEHICLES · HOST PHYSICS · WEBRTC DATA CHANNELS</span></div>
   </section>
 
   <section id="pause-menu" class="overlay hidden" aria-label="Pause and settings">
@@ -46,18 +65,20 @@
       <div class="panel-scroll">
         <div class="setting"><div><strong>Simulation mode</strong><small>Creative: unlimited · Chaos: amplified impulses</small></div><select id="game-mode"><option value="creative">Creative</option><option value="chaos">Chaos</option></select></div>
         <div class="setting"><div><strong>Physics gravity</strong><small>World gravity in meters per second squared</small></div><div class="range-val"><input id="gravity" type="range" min="0" max="25" step="0.5" value="9.81"><span id="gravity-value">9.81</span></div></div>
+        <div class="setting"><div><strong>Mouse sensitivity</strong><small>Look speed (1.8× default); changes apply instantly</small></div><div class="range-val"><input id="mouse-sensitivity" type="range" min="0.7" max="3.5" step="0.1" value="1.8" aria-label="Mouse sensitivity"><span id="mouse-sensitivity-value">1.8×</span></div></div>
         <div class="setting"><div><strong>Simulation speed</strong><small>Slows or speeds up the real fixed-step physics clock</small></div><div class="range-val"><input id="timescale" type="range" min="0.2" max="2" step="0.1" value="1"><span id="timescale-value">1.0×</span></div></div>
         <div class="setting"><div><strong>Time of day</strong><small>Changes sun position and environmental lighting</small></div><div class="range-val"><input id="time" type="range" min="5" max="22" step="0.5" value="15"><span id="time-value">15:00</span></div></div>
         <div class="setting"><div><strong>Graphics profile</strong><small>Controls pixel ratio and shadow resolution</small></div><select id="graphics"><option value="low">Low</option><option value="medium">Medium</option><option value="high" selected>High</option><option value="ultra">Ultra</option><option value="cinematic">Cinematic</option></select></div>
         <div class="setting"><div><strong>Debug performance</strong><small>Shows FPS, rigid-body count and position</small></div><label class="switch"><input type="checkbox" id="debug-stats" checked><span></span></label></div>
       </div>
+      <div class="network-session-line"><span id="network-status">LOCAL SINGLE-PLAYER</span><button id="leave-room-btn" class="secondary-btn hidden" type="button">LEAVE ROOM</button></div>
       <div class="panel-actions"><button id="save-btn" class="secondary-btn">SAVE WORLD</button><button id="load-btn" class="secondary-btn">LOAD WORLD</button><button id="reset-btn" class="secondary-btn danger-btn">RESET OBJECTS</button><button id="main-menu-btn" class="secondary-btn">MAIN MENU</button></div>
-      <p class="panel-footnote">World saves use local browser storage. Multiplayer, active ragdolls, soft-body vehicles and fluid dynamics are not part of this build.</p>
+      <p class="panel-footnote">World saves include collision damage, vehicle condition, glass breakage and detached-part state. This build adds a plastically deforming body shell and periodically rebuilt convex collision hull. The chassis remains one rigid body, not a BeamNG-style node-beam solver. Online rooms use encrypted WebRTC data channels, public PeerJS signaling, and host-authoritative physics. TURN relays, reconnect recovery, authoritative player prediction, active ragdolls and water simulation still require further work.</p>
     </div>
   </section>
 
   <section id="spawn-menu" class="overlay hidden" aria-label="Spawn physics objects">
-    <div class="spawn-shell"><div class="panel-head"><div><div class="eyebrow">SANDBOX TOOLKIT</div><h2>OBJECT LIBRARY</h2></div><button id="spawn-close" class="close-btn">✕</button></div><input id="spawn-search" type="search" placeholder="Search objects..." autocomplete="off" aria-label="Search spawnable objects"><div class="spawn-grid" id="spawn-list"></div><div class="spawn-footer">Spawned objects have rigid bodies, material densities, friction and collision responses.</div></div>
+    <div class="spawn-shell"><div class="panel-head"><div><div class="eyebrow">SANDBOX TOOLKIT</div><h2>SPAWN OBJECTS + VEHICLES</h2></div><button id="spawn-close" class="close-btn">✕</button></div><input id="spawn-search" type="search" placeholder="Search objects..." autocomplete="off" aria-label="Search spawnable objects"><div class="spawn-grid" id="spawn-list"></div><div class="spawn-footer">Use the VEHICLES category to spawn a fully driveable sports coupe. Press E near it to enter.</div></div>
   </section>
 
   <div id="loading" class="loading-overlay hidden"><div class="loading-word">INITIALIZING<br><em>REALITY.</em></div><div class="loading-line"><span></span></div><small id="loading-stage">INITIALIZING SIMULATION</small></div>
